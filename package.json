@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "node app.js"
   },
   "keywords": [],
   "author": "",
@@ -15,12 +15,23 @@
     "@chroma-core/default-embed": "^0.1.9",
     "@google/genai": "^1.45.0",
     "@google/generative-ai": "^0.24.1",
-    "@langchain/google-genai": "^2.1.25",
+    "@langchain/google-genai": "^2.1.26",
     "chromadb": "^3.4.0",
-    "dotenv": "^17.3.1",
-    "express": "^5.1.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.1",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.3.2",
+    "helmet": "^8.1.0",
+    "langchain": "^1.2.37",
+    "mongoose": "^9.4.1",
+    "morgan": "^1.10.1",
     "multer": "^2.1.1",
     "openai": "^6.7.0",
-    "tiktoken": "^1.0.22"
+    "pdf-parse": "^2.4.5",
+    "tiktoken": "^1.0.22",
+    "uuid": "^13.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
   }
 }
