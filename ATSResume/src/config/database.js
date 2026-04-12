@@ -1,19 +1,21 @@
 import mongoose from "mongoose";
 import logger from "../utils/logger.js";
-
+import { configDotenv } from "dotenv";
+configDotenv()
 export const connectDB = async () => {
   try {
     const conn = await mongoose.connect(
       process.env.MONGODB_URI || "mongodb://localhost:27017/genai",
-      {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        serverSelectionTimeoutMS: 5000,
-        socketTimeoutMS: 45000,
-      },
+      // {
+      //   useNewUrlParser: true,
+      //   useUnifiedTopology: true,
+      //   // serverSelectionTimeoutMS: 5000,
+      //   // socketTimeoutMS: 45000,
+      // },
     );
 
     logger.info(`✅ MongoDB Connected: ${conn.connection.host}`);
+    console.log("mongodb connected successfully!");
 
     // Handle connection events
     mongoose.connection.on("error", (err) => {
@@ -35,5 +37,3 @@ export const connectDB = async () => {
     }
   }
 };
-
-

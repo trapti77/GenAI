@@ -1,23 +1,24 @@
 import multer from "multer";
-import path from "path"
-const {
-  FILE_SIZE_LIMIT,
-  ALLOWED_FILE_TYPES,
-} = require("../constants/appConstants");
+import path from "path";
+import {
+  // FILE_SIZE_LIMIT,
+  // ALLOWED_FILE_TYPES,
+  constant
+} from "../constants/appConstants.js";
 
 // Configure multer for memory storage
 const storage = multer.memoryStorage();
 
 // File filter
 const fileFilter = (req, file, cb) => {
-  const allowedMimes = ALLOWED_FILE_TYPES.map((type) => type.mime);
+  const allowedMimes = constant.ALLOWED_FILE_TYPES.map((type) => type.mime);
 
   if (allowedMimes.includes(file.mimetype)) {
     cb(null, true);
   } else {
     cb(
       new Error(
-        `Invalid file type. Allowed types: ${ALLOWED_FILE_TYPES.map((t) => t.ext).join(", ")}`,
+        `Invalid file type. Allowed types: ${constant.ALLOWED_FILE_TYPES.map((t) => t.ext).join(", ")}`,
       ),
       false,
     );
@@ -28,7 +29,7 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
   storage: storage,
   limits: {
-    fileSize: FILE_SIZE_LIMIT,
+    fileSize: constant.FILE_SIZE_LIMIT,
   },
   fileFilter: fileFilter,
 });
@@ -39,7 +40,7 @@ const handleMulterError = (err, req, res, next) => {
     if (err.code === "FILE_TOO_LARGE") {
       return res.status(400).json({
         success: false,
-        error: `File too large. Maximum size: ${FILE_SIZE_LIMIT / (1024 * 1024)}MB`,
+        error: `File too large. Maximum size: ${constant.FILE_SIZE_LIMIT / (1024 * 1024)}MB`,
       });
     }
     return res.status(400).json({
@@ -50,7 +51,7 @@ const handleMulterError = (err, req, res, next) => {
   next(err);
 };
 
-export const  = {
+export const handleMulter = {
   single: (fieldName) => [upload.single(fieldName), handleMulterError],
   array: (fieldName, maxCount) => [
     upload.array(fieldName, maxCount),

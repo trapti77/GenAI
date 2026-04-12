@@ -1,7 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import logger from "../utils/logger.js";
-
-export class GeminiConfig {
+ class GeminiConfig {
   constructor() {
     if (!process.env.GEMINI_API_KEY) {
       throw new Error("GEMINI_API_KEY is required in environment variables");

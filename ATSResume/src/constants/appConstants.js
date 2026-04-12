@@ -1,4 +1,4 @@
-export = {
+export const constant = {
   // File upload limits
   FILE_SIZE_LIMIT: 5 * 1024 * 1024, // 5MB
 

@@ -1,10 +1,10 @@
-import express from "express"
+import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import rateLimit from "express-rate-limit";
 import resumeRoutes from "./routes/resumeRoutes.js";
-import errorMiddleware from "./middleware/errorMiddleware.js";
+import { errorMiddleware } from "./middleware/errorMiddleware.js";
 import logger from "./utils/logger.js";
 
 const app = express();
@@ -66,4 +66,4 @@ app.use((req, res) => {
 // Global error handler
 app.use(errorMiddleware);
 
-module.exports = app;
+export { app };

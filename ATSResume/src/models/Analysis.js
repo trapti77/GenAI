@@ -135,4 +135,4 @@ analysisSchema.methods.getScoreCategory = function () {
   return "Needs Improvement";
 };
 
-export const Analyze = mongoose.model("Analysis", analysisSchema);
+export const Analysis = mongoose.model("Analysis", analysisSchema);
