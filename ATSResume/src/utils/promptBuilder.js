@@ -1,32 +1,37 @@
 class PromptBuilder {
   buildATSPrompt(resumeText, jobDescription) {
     return `
-You are an expert ATS (Applicant Tracking System) evaluator with 10+ years of experience in HR technology. Analyze this resume against the job description and provide detailed feedback.
+You are an ATS (Applicant Tracking System) evaluator.
+
+STRICT RULES (VERY IMPORTANT):
+- Return ONLY valid JSON
+- DO NOT add explanation, markdown, or extra text
+- DO NOT truncate JSON
+- Ensure JSON is COMPLETE and PARSEABLE
+- If unsure, still return valid JSON
+
+LIMITS:
+- Max 5 items per array
+- Keep each string under 20 words
+
+OUTPUT FORMAT:
+{
+  "atsScore": 0,
+  "keywordMatch": 0,
+  "missingKeywords": [],
+  "presentKeywords": [],
+  "strengths": [],
+  "weaknesses": [],
+  "suggestions": []
+}
 
 JOB DESCRIPTION:
 ${jobDescription}
 
-RESUME TEXT:
+RESUME:
 ${resumeText}
 
-Analyze the following aspects:
-1. Keyword matching - How well does the resume match job-specific keywords?
-2. Format and structure - Is it ATS-friendly?
-3. Content relevance - Are the experiences and skills relevant?
-4. Missing elements - What important keywords or sections are missing?
-
-Return ONLY valid JSON in this exact format (no other text):
-{
-    "atsScore": number (0-100 overall score),
-    "keywordMatch": number (0-100 keyword match percentage),
-    "missingKeywords": ["keyword1", "keyword2"] (at least 5 if applicable),
-    "presentKeywords": ["keyword1", "keyword2"] (top 10 matched keywords),
-    "strengths": ["strength1", "strength2"] (3-5 strengths),
-    "weaknesses": ["weakness1", "weakness2"] (3-5 areas for improvement),
-    "suggestions": ["suggestion1", "suggestion2"] (3-5 actionable suggestions)
-}
-
-Be specific, practical, and honest in your assessment. Focus on actionable feedback.
+Now return the JSON.
 `;
   }
 
@@ -34,23 +39,48 @@ Be specific, practical, and honest in your assessment. Focus on actionable feedb
     try {
       let text = response?.text || response;
 
-      // ✅ Remove markdown ```json ```
       text = text
         .replace(/```json/g, "")
         .replace(/```/g, "")
         .trim();
 
-      // ✅ Extract JSON safely
-      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      // Extract JSON block
+      let jsonMatch = text.match(/\{[\s\S]*$/);
+      if (!jsonMatch) throw new Error("No JSON found");
 
-      if (!jsonMatch) {
-        throw new Error("No JSON found in AI response");
+      let jsonString = jsonMatch[0];
+
+      // 🔥 Fix broken JSON step-by-step
+
+      // 1. Remove trailing commas
+      jsonString = jsonString.replace(/,\s*]/g, "]").replace(/,\s*}/g, "}");
+
+      // 2. Close open quotes (VERY IMPORTANT)
+      const quoteCount = (jsonString.match(/"/g) || []).length;
+      if (quoteCount % 2 !== 0) {
+        jsonString += '"';
       }
 
-      return JSON.parse(jsonMatch[0]);
+      // 3. Balance brackets
+      const openBrackets = (jsonString.match(/\[/g) || []).length;
+      const closeBrackets = (jsonString.match(/]/g) || []).length;
+
+      if (openBrackets > closeBrackets) {
+        jsonString += "]".repeat(openBrackets - closeBrackets);
+      }
+
+      // 4. Balance braces
+      const openBraces = (jsonString.match(/{/g) || []).length;
+      const closeBraces = (jsonString.match(/}/g) || []).length;
+
+      if (openBraces > closeBraces) {
+        jsonString += "}".repeat(openBraces - closeBraces);
+      }
+
+      return JSON.parse(jsonString);
     } catch (error) {
-      console.error("Raw response:", response);
-      throw error;
+      console.error("❌ Raw AI response:", response);
+      throw new Error("Invalid JSON from AI");
     }
   }
 

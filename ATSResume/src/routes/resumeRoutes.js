@@ -4,13 +4,20 @@ import { resumeController } from "../controllers/resumeController.js";
 import { handleMulter } from "../middleware/uploadMiddleware.js";
 import { validationMiddleware } from "../middleware/validationMiddleware.js";
 
+
 // POST /api/resume/analyze - Analyze a resume
+
 router.post(
   "/analyze",
   handleMulter.single("resume"),
-  // validationMiddleware.validateAnalysisRequest,
-  resumeController.analyzeResume,
+  resumeController.analyzeResume.bind(resumeController),
 );
+// router.post(
+//   "/analyze",
+//   handleMulter.single("resume"),
+//   // validationMiddleware.validateAnalysisRequest,
+//   resumeController.analyzeResume,
+// );
 
 // GET /api/resume/history - Get analysis history
 router.get("/history", resumeController.getAnalysisHistory);

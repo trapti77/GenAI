@@ -4,6 +4,7 @@ class ATSScoreService {
   calculateDetailedScores(analysis, resumeText, jobDescription) {
       //calculate weighted scores based on multiple factors
     
+      console.log("ana-----------------------",analysis);
       
       if (!analysis) {
         throw new Error("analysis not found")

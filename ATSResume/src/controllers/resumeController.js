@@ -5,7 +5,6 @@ import { Analysis } from "../models/Analysis.js";
 import logger from "../utils/logger.js";
 import { createHash } from "crypto";
 
-
 class ResumeController {
   async saveAnalysis(file, analysis, jobDescription, req) {
     const jobDescriptionHash = createHash("md5")
@@ -34,6 +33,7 @@ class ResumeController {
 
     return await analysisDoc.save();
   }
+  
   async analyzeResume(req, res, next) {
     const startTime = Date.now();
     try {
@@ -67,6 +67,7 @@ class ResumeController {
           error: parseResult.error,
         });
       }
+      // console.log("parseResultparseResult--------------", parseResult);
 
       // Analyze with Gemini
       const aiAnalysis = await geminiAnalysisservice.analyzeResume(
@@ -77,13 +78,16 @@ class ResumeController {
           fileSize: req.file.size,
         },
       );
+
+      console.log("aiAnalysis--------------", aiAnalysis);
+
       if (aiAnalysis.success == false) {
         // Use fallback analysis
         logger.warn("Using fallback analysis due to AI failure");
       }
 
-
       const analysisData = aiAnalysis.analysis || aiAnalysis.fallbackAnalysis;
+      // console.log("anaDta--------------", analysisData);
 
       // Calculate detailed scores
       const detailedScores = atsService.calculateDetailedScores(
@@ -113,15 +117,15 @@ class ResumeController {
       };
 
       // Save to database
-      const savedAnalysis = await this.saveAnalysis(
+      const savedAnalysis =await this.saveAnalysis(
         req.file,
         finalAnalysis,
         jobDescription,
         req,
       );
 
-      console.log("save anaoo----------------",savedAnalysis);
-      
+      // console.log("save anaoo----------------", savedAnalysis);
+
       // Log success
       logger.info(`Resume analyzed successfully: ${req.file.originalname}`, {
         atsScore: finalAnalysis.atsScore,

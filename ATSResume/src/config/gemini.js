@@ -1,5 +1,8 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import logger from "../utils/logger.js";
+
+console.log(process.env.GEMINI_API_KEY);
+
  class GeminiConfig {
   constructor() {
     if (!process.env.GEMINI_API_KEY) {
@@ -9,10 +12,10 @@ import logger from "../utils/logger.js";
     this.genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
     this.model = this.genAI.getGenerativeModel({
-      model: process.env.GEMINI_MODEL || "gemini-2.0-flash-exp",
+      model: process.env.GEMINI_MODEL || "gemini-2.5-flash",
     });
     logger.info(
-      `🤖 Gemini AI initialized with model: ${process.env.GEMINI_MODEL || "gemini-2.0-flash-exp"}`,
+      `🤖 Gemini AI initialized with model: ${process.env.GEMINI_MODEL || "gemini-2.5-flash"}`,
     );
   }
   getModel() {
